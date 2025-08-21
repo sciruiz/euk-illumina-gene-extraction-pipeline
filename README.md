@@ -1,6 +1,7 @@
-# pomacea-illumina
+# Idenfitificación y Análisis de perivitelinas en el género *Pomacea*
 
 -- ES
+`⚠️ AVISO: Trabajo en progreso`
 
 ## Metodología 
 
