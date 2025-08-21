@@ -5,7 +5,7 @@
 ## Metodología 
 
 ![Figure 1](link)
-Detailed methodological workflow. 
+Methodología detallada usada para la extracción de genes. 
 
 -- ES / EN
 ## Referencias / References
