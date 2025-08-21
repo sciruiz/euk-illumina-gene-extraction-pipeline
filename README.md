@@ -4,7 +4,7 @@
 
 ## Metodología 
 
-![Figure 1](link)
+![.](https://github.com/sciruiz/pomacea-illumina/blob/main/Figura1.png)
 Methodología detallada usada para la extracción de genes. 
 
 -- ES / EN
