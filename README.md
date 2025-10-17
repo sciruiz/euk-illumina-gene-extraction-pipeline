@@ -246,7 +246,7 @@ You can install [Miniconda](https://docs.anaconda.com/miniconda/) or [Mamba](htt
 
 ---
 
-## 🧰 Create a Base Bioinformatics Environment
+## Create a Base Bioinformatics Environment
 
 You can either install all tools in one environment or separate them as suggested*.
 *Update 2025: There is a conflict between pandas and exonerate, that's why is suggested to install separately. 
