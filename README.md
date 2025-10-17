@@ -50,7 +50,7 @@ This step trims adapters, filters low-quality reads, and generates quality repor
   -O output_folder/fastp_out/specie.R2.fq.gz \
   --unpaired1 output_folder/fastp_out/specie.unpaired_R1.fastq.gz \
   --unpaired2 output_folder/fastp_out/specie.unpaired_R2.fastq.gz \
-  -w 32 &
+  -w 32 
 ```
 
 To include unpaired reads in later analysis (maximize usable reads):
@@ -219,18 +219,13 @@ Paste your sequence into:
 * [ORFfinder (NCBI)](https://www.ncbi.nlm.nih.gov/orffinder)
 * [BLAST Suite (NCBI)](https://blast.ncbi.nlm.nih.gov/Blast.cgi)
 
-These tools help confirm your gene identity and assess coding potential.
+These tools help confirm your gene identity.
 
 ---
 
 ## Step 6: What’s Next?
 
-If your genes show good quality:
-
-* Proceed to **phylogenetic analysis**
-* Or perform **functional characterization**
-
-Congratulations — you’ve completed the full pipeline!
+If your genes seems to be what you were expecting... Congratulations! You can proceed to do a phylogenetic analysis, continue characterising the structure of the protein or another related analysis.
 
 ---
 
@@ -244,7 +239,7 @@ You can install [Miniconda](https://docs.anaconda.com/miniconda/) or [Mamba](htt
 ## Create a Base Bioinformatics Environment
 
 You can either install all tools in one environment or separate them as suggested*.
-*Update 2025: There is a conflict between pandas and exonerate, that's why is suggested to install separately. 
+*Update 2025: There is a conflict between pandas and exonerate, the second option is recommended. 
 
 ```bash
 conda create -n gene_extract
@@ -256,6 +251,7 @@ conda install -c bioconda fastp
 conda install -c bioconda samtools
 conda install -c bioconda bedtools
 conda install -c bioconda bcftools
+
 conda deactivate
 ```
 
