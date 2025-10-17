@@ -208,12 +208,7 @@ Check:
 
 ## Step 4: Extract Sequences (Google Colab)
 
-Once you identify your sequence region, extract the FASTA sequence using:
-
-* **Single sequence** → [Google Colab Notebook](https://colab.research.google.com/drive/18Gp7TfJn1hbEwWwZNy6iVgCyaSjYvaKe?usp=sharing)
-* **Multiple sequences (file input)** → [Google Colab Notebook](https://colab.research.google.com/drive/1tTu_vTorVT5wcZbma1KyLAa2bL1OGZ_1?usp=sharing)
-
-Each will print your FASTA output, ready for downstream analysis.
+Once you identify your alignment of interest, extract the FASTA sequence simply pasting your `Exonerate` alignmentt with this [Google Colab Notebook](https://colab.research.google.com/drive/18Gp7TfJn1hbEwWwZNy6iVgCyaSjYvaKe?usp=sharing) Each will print or download your FASTA sequence (or file), ready for downstream analysis.
 
 ---
 
