@@ -1,30 +1,134 @@
-# Idenfitificación y Análisis de perivitelinas en el género *Pomacea*
+Installation for each software is included in the last section.
 
--- ES
-`⚠️ AVISO: Trabajo en progreso`
+## Step 0: Set up your environment
+Recomendation: set the reference sequences, output folders, and subfolders before starting
+```
+mkdir ref_seq
+mkdir output_folder
+mkdir fastqc_out fastp_out hisat2 consensus exonerate
+```
+## Step 0: Quality Control
+This step checks the quality of sequencing using `fastqc`. 
+```
 
-## Metodología 
+```
+## Step 1: Read Preprocessing
+This step trims adapters, filters low-quality reads, and generates reports using `fastp v. 0.24.0`. 
+```
+./fastp -i your_folder/specie.read_1.fastq.gz \
+  -I your_folder/specie.read_2.fastq.gz \
+  -o output_folder/fastp_out/specie.R1.fq.gz \
+  -O output_folder/fastp_out/specie.R2.fq.gz \
+  --unpaired1 output_folder/fastp_out/specie.unpaired_R1.fastq.gz \
+  --unpaired2 output_folder/fastp_out/specie.unpaired_R2.fastq.gz \
+  -w 32 &
+```
+We can concatenate the unpaired reads to maximize the reads that match with the section we are interested. 
+```
+#remember to be on the same folder as your files
+cat PORE.unpaired_R1.fastq.gz PORE.unpaired_R2.fastq.gz > PORE.up.fastq.gz
+```
 
-![.](https://github.com/sciruiz/pomacea-illumina/blob/main/Figura1.png)
-Methodología detallada usada para la extracción de genes. 
+## Step 2: Alignment and mapping reads to a target sequence
+The target sequence could be a chromosome or a specific region that your genes of interes are located. We need the `.fasta` and `.gff3` files. They can be downloaded directly from NCBI and saved into your designated folder (e.g. `ref_seqs`).
 
--- ES / EN
-## Referencias / References
+1. Index your target sequence (e.g. a chromosome), this step would generate a series of `.ht2` files to be used as index for `HISAT2`.
+```
+hisat2-build ref_chromosome.fa chr_index
+```
+2. Align the reads to `HISAT2`.
+```
+conda activate hisat2
+# Paired reads command
+hisat2 -p 24 -x chr_index -1 output_folder/fastp_out/specie.R1.fq.gz -2 output_folder/fastp_out/specie.R2.fq.gz -S output_folder/hisat2/specie.chr7.sam
 
-Ampuero, A., & Ramirez, R. (2023). Description of two new species of apple snail (Ampullariidae: Pomacea) from Peruvian Amazonia. Zootaxa, 5258(1), 76–98. https://doi.org/10.11646/zootaxa.5258.1.3
-Hayes, K. A., Cowie, R. H., & Thiengo, S. C. (2009). A global phylogeny of apple snails: Gondwanan origin, generic relationships, and the influence of outgroup choice (Caenogastropoda: Ampullariidae). Biological Journal of the Linnean Society, 98(1), 61–76. https://doi.org/10.1111/j.1095-8312.2009.01246.x
+# Unpaired reads command
+hisat2 -p 24 -x chr_index -U output_folder/fastp_out/specie.up.fastq.gz -S output_folder/hisat2/specie.chr7.up.sam
+conda deactivate
+```
+3. Mapping the reads to the reference sequence
+```
+#Locate yourself on output_folder/hisat2/
+conda activate pomacea
+# Paired reads
+samtools view -bS specie.chr7.sam > specie.chr7.bam
+rm specie.chr7.sam
+samtools view -H specie.chr7.bam
+samtools sort specie.chr7.bam -o specie.chr7_sorted.bam
+samtools index specie.chr7_sorted.bam
 
-Ip, J. C. H., Mu, H., Zhang, Y., Sun, J., Heras, H., Chu, K. H., & Qiu, J.-W. (2019). Understanding the transition from water to land: Insights from multi-omic analyses of the perivitelline fluid of apple snail eggs. Journal of Proteomics, 194, 79–88. https://doi.org/10.1016/j.jprot.2018.12.014
+# Unpaired reads
+samtools view -bS specie.chr7.up.sam > specie.chr7.up.bam
+rm specie.chr7.up.sam
+samtools view -H specie.chr7.up.bam
+samtools sort specie.chr7.up.bam -o specie.chr7_sorted.up.bam
+samtools index specie.chr7_sorted.up.bam
 
-Lu, Y., Luo, F., Zhou, A., Yi, C., Chen, H., Li, J., … Hu, W. (2024). Whole-genome sequencing of the invasive golden apple snail *Pomacea canaliculata* from Asia reveals rapid expansion and adaptive evolution. GigaScience, 13. https://doi.org/10.1093/gigascience/giae064
+# Merge paired and unpaired 
 
-Mendivil, A., Ramírez, R., Morin, J., Ramirez, J. L., Siccha-Ramirez, R., Britzke, R., … Congrains, C. (2023). Comparative Mitogenome Analysis of Two Native Apple Snail Species (Ampullariidae, Pomacea) from Peruvian Amazon. Genes, 14(9), 1769. https://doi.org/10.3390/genes14091769
+samtools merge specie.all.chr7_sorted.bam specie.chr7_sorted.bam specie.chr7_sorted.up.bam
+rm specie.chr7.bam specie.chr7_sorted.bam specie.chr7.up.bam specie.chr7_sorted.up.bam 
+rm specie.chr7_sorted.bam.bai specie.chr7_sorted.up.bam.bai
 
-Ramírez, R., Ramirez, J. L., Rivera, F., Justino, S., Solís, M., Morín, J., … Congrains, C. (2022). Do not judge a snail by its shell: molecular identification of Pomacea species (Gastropoda: Ampullariidae), with particular reference to the Peruvian Amazonian giant apple snail, erroneously synonymized with Pomacea maculata. Archiv Für Molluskenkunde, 151(1), 7–17. https://doi.org/http://doi.org/10.1127/arch.moll/151/007-017
+samtools index specie.all.chr7_sorted.bam
 
-Ramírez, R., Solis, M., Ampuero, A., Morín, J., Jimenez-Vasquez, V., Ramirez, J. L., … Shiga, B. (2020). Identificación molecular y relaciones evolutivas de *Pomacea nobilis*, base para la autenticación específica del churo negro de la Amazonia peruana. Revista Peruana de Biología, 27(2), 139–148. https://doi.org/10.15381/rpb.v27i2.17875
+### Check quality for indexed files
+samtools flagstat specie.all.chr7_sorted.bam --threads 16 -O tsv 
 
-Sun, J., Mu, H., Ip, J. C. H., Li, R., Xu, T., Accorsi, A., … Qiu, J.-W. (2019). Signatures of Divergence, Invasiveness, and Terrestrialization Revealed by Four Apple Snail Genomes. Molecular Biology and Evolution, 36(7), 1507–1520. https://doi.org/10.1093/molbev/msz084
+```
+4. Check the coverage and depth
 
-Xiong, J., Gao, Y., Zhou, Y., Ip, J. C.-H., Ituarte, S., Heras, H., … Sun, J. (2025). Four chromosome-scale ampullariid genomes: high-quality resources for ecological, evolutionary, and invasion biology studies. DNA Research, 32(3). https://doi.org/10.1093/dnares/dsaf010
- 
+```
+#Locate yourself at output_folder/hisat2
+#conda activate pomacea
+
+#Calculate the coverage 
+bedtools genomecov -ibam specie.all.chr7_sorted.bam -bga > specie_coverage.tsv
+
+#intersect the coverage with the (expected) position for your genes based on your reference specie `.bed` file containing only your target gene. 
+bedtools intersect -a specie_coverage.tsv -b pomacea.pv2.gene.feature.bed -wa -wb > specie.coverage_per_gene.tsv
+```
+You can check `specie_coverage.tsv` and `specie.coverage_per_gene.tsv` with the `coverage.R` script provided in this repository. The results would suggest if they region where your gene of interest is located have good coverage or not. 
+
+5. Obtain the reads with bcftools 
+```
+### Generar un archivo máscara con las regiones que no coberturan las variantes
+awk '$4 == 0 {print $1"\t"$2"\t"$3}' specie_coverage.tsv > specie.mask.bed
+
+### Run bcftools
+bcftools mpileup -Ou -f /home/bioupg02/pomacea_pr/ref_seq/LG7.fasta specie.all.chr7_sorted.bam | bcftools call -mv -Oz -o specie.chr7.variants.vcf.gz
+bcftools index specie.chr7.variants.vcf.gz
+
+bcftools consensus -f /home/bioupg02/pomacea_pr/ref_seq/LG7.fasta specie.chr7.variants.vcf.gz -m specie.mask.bed > /home/bioupg02/pomacea_pr/pomacea_out/consensus/specie.LG7_consensus.fa
+### Warning: this tool skip variants, in case it overlaps with another variant. Check if this happen in your position of interest.
+### For specie it doesn't happen but a possible solution is to normalize the variant (reduces it to two records?) 
+### bcftools norm -m -both -f ref_chromosome.fasta specie.chr7.variants.vcf.gz -Oz -o specie.chr7.variants.norm.vcf.gz
+### bcftools index specie.chr7.variants.norm.vcf.gz
+### Then repeat consensus generation, and later indexing
+
+samtools faidx /home/bioupg02/pomacea_pr/pomacea_out/consensus/specie.chr_consensus.fa
+conda deactivate
+```
+## Step3: Extract the CDS of target genes
+```
+conda activate exonerate
+exonerate --model protein2genome ref_proteins.fa ../consensus/specie.chr_consensus.fa --showvulgar no --showalignment yes > specie.exo.out
+exonerate --model protein2genome ref_proteins.fa ../consensus/specie.chr_consensus.fa --showvulgar no --showalignment yes > specie.exo.out
+conda deactivate
+```
+We need to organise and filter the data in order it'easier to take a decision, you can use `exo2tables.py` and get a `.tsv` summary you can inspect in any text reader or excel. 
+```
+conda activate pandas
+# It would ask the file you would like to run to get the information. 
+python3 exo2tables.py
+conda deactivate
+```
+
+## Step4: Analizing your results 
+
+
+## Step5: Which further analysis can I do with this results?
+
+You get to the end of the pipeline!
+
+
