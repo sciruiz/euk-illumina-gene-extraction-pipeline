@@ -15,8 +15,6 @@ This pipeline describes how to extract and validate genes of interest from Illum
 | Gene Extraction | Exonerate, python | 
 ---
 
----
-
 ## Step 0: Set Up the Environment
 
 **Recommendation:**
