@@ -15,7 +15,7 @@ This pipeline describes how to extract and validate genes of interest from Illum
 | Gene Extraction | Exonerate, python | 
 ---
 
-## Step 0: Set Up the Environment
+## Set Up the Environment
 
 **Recommendation:**
 Before starting, create folders for references, outputs, and intermediate results.
@@ -28,7 +28,7 @@ mkdir fastqc_out fastp_out hisat2 consensus exonerate
 
 ---
 
-## Step 0: Quality Control (FastQC)
+## Step 1: Quality Control (FastQC) and Read Preprocessing (fastp)
 
 This step checks the raw read quality using **[FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)**.
 
@@ -39,9 +39,7 @@ fastqc reads/specie.read_1.fastq.gz reads/specie.read_2.fastq.gz -o output_folde
 
 ---
 
-##  Step 1: Read Preprocessing (FASTP)
-
-This step trims adapters, filters low-quality reads, and generates quality reports using **[FastP v0.24.0](https://github.com/OpenGene/fastp)**.
+Then, we can trim adapters, filters low-quality reads, and generates quality reports using **[FastP v0.24.0](https://github.com/OpenGene/fastp)**. Alternatively you can use Trimmomatic or other software. 
 
 ```bash
 ./fastp -i reads/specie.read_1.fastq.gz \
@@ -226,13 +224,11 @@ Check:
 
 ---
 
-## Step 4: Extract Sequences (Google Colab)
-
 Once you identify your alignment of interest, extract the FASTA sequence simply pasting your `Exonerate` alignmentt with this [Google Colab Notebook](https://colab.research.google.com/drive/18Gp7TfJn1hbEwWwZNy6iVgCyaSjYvaKe?usp=sharing) Each will print or download your FASTA sequence (or file), ready for downstream analysis.
 
 ---
 
-## Step 5: Validate Gene Identity
+## Step 4: Validate Gene Identity
 
 Paste your sequence into:
 
@@ -243,7 +239,7 @@ These tools help confirm your gene identity.
 
 ---
 
-## Step 6: What’s Next?
+## What’s Next?
 
 If your genes seems to be what you were expecting... Congratulations! You can proceed to do a phylogenetic analysis, continue characterising the structure of the protein or another related analysis.
 
@@ -266,11 +262,12 @@ conda create -n gene_extract
 
 conda activate gene_extract
 
-conda install -c bioconda fastqc
-conda install -c bioconda fastp
-conda install -c bioconda samtools
-conda install -c bioconda bedtools
-conda install -c bioconda bcftools
+conda install bioconda::fastqc
+conda install bioconda::fastp
+conda install bioconda::samtools
+conda install bioconda::bedtools
+conda install bioconda::bcftools
+conda install bioconda::entrez-direct
 
 conda deactivate
 ```
@@ -281,7 +278,7 @@ conda deactivate
 
 ```bash
 conda create -n hisat2 
-conda install -c bioconda hisat2
+conda install bioconda::hisat2
 conda deactivate
 ```
 
@@ -291,14 +288,14 @@ conda deactivate
 
 ```bash
 conda create -n exonerate 
-conda install -c bioconda exonerate
+conda install bioconda::exonerate
 conda deactivate
 ```
 
 ---
 
 ## Python (Pandas & Utilities) — Post-processing
-** In case it is not installed, usual python suites include pandas. 
+** In case it is not installed, usually python suites include pandas. 
 ```bash
 conda create -n pandas
 conda install pandas
