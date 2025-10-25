@@ -63,8 +63,28 @@ cat specie.unpaired_R1.fastq.gz specie.unpaired_R2.fastq.gz > specie.up.fastq.gz
 
 ## Step 2: Alignment and Mapping to Target Sequence (HISAT2)
 
-This step aligns the cleaned reads to your target genome or chromosome using **[HISAT2](https://daehwankimlab.github.io/hisat2/)**.
+This step aligns the cleaned reads to your target genome section or chromosome using **[HISAT2](https://daehwankimlab.github.io/hisat2/)**.
 
+### 2.0 Genome Retrieval 
+
+You can download the region or full chromosome from NCBI using `efetch`. 
+1. Go to NCBI Datasets, and search the species of your interest.
+2. Scroll down, and see if there is an available genome at NCBI. In case not, maybe you can search in alternative websites such as EMBL.
+3. Go to BLAST the reference genome.
+4. By default, it will show the `blastn`, add your query sequence (e.g. mRNA, CDS, partial rRNA, etc.) and then go to BLAST. In case you have a protein sequence, select the option `tblastn`, add your query sequence and then go to BLAST.
+5. If your query sequence hits a match, then you can see the range (e.g. 234432111 to 234433221) in the accesion (e.g. NC_037596.1) that it's more accurate for your analysis.
+
+Now you can download your information to the folder of your interest (e.g. ref_seq). 
+```
+ efetch -db nucleotide -id NC_037596.1 -format fasta > species.fasta
+```
+Also you can download a portion of the sequence
+
+⚠️ Only if you are sure that the sequence is on that region. 
+```
+efetch -db nucleotide -id NC_037596.1 -seq_start 2350000 -seq_stop 2720000 -format fasta > species_region.fasta
+```
+    
 ### 2.1 Index the Reference Sequence
 
 Prepare `.ht2` index files for HISAT2:
