@@ -180,10 +180,10 @@ Use **[BCFtools](http://samtools.github.io/bcftools/)** to call variants and bui
 awk '$4 == 0 {print $1"\t"$2"\t"$3}' specie_coverage.tsv > specie.mask.bed
 
 # Variant calling and consensus
-bcftools mpileup -Ou -f ref_seq/chr.fasta specie.all.chr7_sorted.bam | bcftools call -mv -Oz -o specie.chr7.variants.vcf.gz
-bcftools index specie.chr7.variants.vcf.gz
+bcftools mpileup -Ou -f ref_seq/chr.fasta specie.all.chr_sorted.bam | bcftools call -mv -Oz -o specie.chr.variants.vcf.gz
+bcftools index specie.chr.variants.vcf.gz
 
-bcftools consensus -f ref_seq/chr.fasta specie.chr7.variants.vcf.gz -m specie.mask.bed > output_folder/consensus/specie.chr_consensus.fa
+bcftools consensus -f ref_seq/chr.fasta specie.chr.variants.vcf.gz -m specie.mask.bed > output_folder/consensus/specie.chr_consensus.fa
 samtools faidx output_folder/consensus/specie.chr_consensus.fa
 conda deactivate
 ```
@@ -192,8 +192,8 @@ conda deactivate
 If overlapping variants occur, normalize before consensus:
 
 ```bash
-bcftools norm -m -both -f ref_seq/chr.fasta specie.chr7.variants.vcf.gz -Oz -o specie.chr7.variants.norm.vcf.gz
-bcftools index specie.chr7.variants.norm.vcf.gz
+bcftools norm -m -both -f ref_seq/chr.fasta specie.chr.variants.vcf.gz -Oz -o specie.chr.variants.norm.vcf.gz
+bcftools index specie.chr.variants.norm.vcf.gz
 ```
 
 ---
