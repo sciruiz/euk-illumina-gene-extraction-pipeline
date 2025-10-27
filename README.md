@@ -1,7 +1,7 @@
 
 # Gene Extraction Pipeline from Illumina Reads
 
-This pipeline describes how to extract and validate genes of interest from Illumina paired-end reads of Mollusks (but might be useful for other Eukarya as well!). 
+This pipeline describes how to recover, extract and validate genes from Illumina paired-end reads for Pomacea snails (but might be useful for other Eukarya as well!). 
 
 ## Tools used in this pipeline
 
